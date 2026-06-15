@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Comment from "./Comment";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
@@ -25,7 +25,7 @@ export default function CommentBoard(props) {
             });
     }
 
-    function handleLoginSubmit(e) {
+    const handleLoginSubmit = useCallback((e, user, pass) => {
         e?.preventDefault();
 
         fetch("https://cs571.org/rest/s25/ice/login", {
@@ -36,8 +36,8 @@ export default function CommentBoard(props) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username: inputUsername,
-                password: inputPassword,
+                username: user,
+                password: pass,
             }),
         }).then((res) => {
             if (res.status === 200) {
@@ -46,7 +46,7 @@ export default function CommentBoard(props) {
                 alert("Invalid username/password!");
             }
         });
-    }
+    }, []);
 
     function handleCommentSubmit(e) {
         e?.preventDefault();
@@ -124,7 +124,15 @@ export default function CommentBoard(props) {
                                 </Form>
                             </>
                         ) : (
-                            <Form onSubmit={handleLoginSubmit}>
+                            <Form
+                                onSubmit={(e) =>
+                                    handleLoginSubmit(
+                                        e,
+                                        inputUsername,
+                                        inputPassword,
+                                    )
+                                }
+                            >
                                 <Form.Label htmlFor="usernameInput">
                                     Username
                                 </Form.Label>
@@ -147,12 +155,7 @@ export default function CommentBoard(props) {
                                     }
                                 ></Form.Control>
                                 <br />
-                                <Button
-                                    type="submit"
-                                    onClick={handleLoginSubmit}
-                                >
-                                    Login
-                                </Button>
+                                <Button type="submit">Login</Button>
                             </Form>
                         )}
                     </Col>
