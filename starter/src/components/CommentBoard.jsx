@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Comment from "./Comment";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import useStorage from "../hooks/useStorage";
 
 export default function CommentBoard(props) {
     const [inputUsername, setInputUsername] = useState("");
@@ -9,7 +10,7 @@ export default function CommentBoard(props) {
 
     // Note! You should use this in combination with sessionStorage.
     // Otherwise, when the user refreshes the page, it will go away!
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useStorage("isLoggedIn", false);
 
     const [comments, setComments] = useState([]);
 
@@ -98,7 +99,7 @@ export default function CommentBoard(props) {
             <Container fluid>
                 <Row>
                     <Col xs={12} md={6} lg={4} style={{ marginBottom: "1rem" }}>
-                        {isLoggedIn ? (
+                        {isLoggedIn ?
                             <>
                                 <Button variant="danger" onClick={handleLogout}>
                                     Logout
@@ -123,8 +124,7 @@ export default function CommentBoard(props) {
                                     </Button>
                                 </Form>
                             </>
-                        ) : (
-                            <Form
+                        :   <Form
                                 onSubmit={(e) =>
                                     handleLoginSubmit(
                                         e,
@@ -157,7 +157,7 @@ export default function CommentBoard(props) {
                                 <br />
                                 <Button type="submit">Login</Button>
                             </Form>
-                        )}
+                        }
                     </Col>
                     <Col xs={12} md={6} lg={8}>
                         <Container fluid>
